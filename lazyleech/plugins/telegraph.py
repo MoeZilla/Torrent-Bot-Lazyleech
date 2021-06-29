@@ -22,11 +22,30 @@ from .. import ADMIN_CHATS, ALL_CHATS
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telegraph import upload_file
 
+_T_LIMIT = 5242880
+
 @Client.on_message(filters.command('telegraph') & filters.chat(ALL_CHATS))
 async def getmedia(bot, update):
     medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/WeebZone/TelegraphBot"
+    
+        replied = message.reply_to_message
+    if not replied:
+        await message.reply("reply to media or text")
+        return
+    if not ((replied.photo and replied.photo.file_size <= _T_LIMIT)
+            or (replied.animation and replied.animation.file_size <= _T_LIMIT)
+            or (replied.video and replied.video.file_name.endswith('.mp4')
+                and replied.video.file_size <= _T_LIMIT)
+            or (replied.sticker and replied.sticker.file_name.endswith('.webp'))
+            or replied.text
+            or (replied.document
+                and replied.document.file_name.endswith(
+                    ('.jpg', '.jpeg', '.png', '.gif', '.mp4', '.html', '.txt', '.py'))
+                and replied.document.file_size <= _T_LIMIT)):
+        await message.reply("not supported!")
+        return
+    
     try:
-    if message.reply_to_message.document: 
         message = await update.reply_message(
             text="`Processing...`",
             disable_web_page_preview=True
