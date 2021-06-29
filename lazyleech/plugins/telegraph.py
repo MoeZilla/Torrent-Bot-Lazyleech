@@ -25,7 +25,6 @@ from telegraph import upload_file
 _T_LIMIT = 5242880
 
 @Client.on_message(filters.command('telegraph') & filters.chat(ALL_CHATS))
-@FayasNoushad.on_message(filters.private & filters.media)
 async def getmedia(bot, update):
     medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/FayasNoushad/FnTelegraphBot"
     try:
