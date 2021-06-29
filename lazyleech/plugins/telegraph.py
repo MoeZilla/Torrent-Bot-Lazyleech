@@ -25,26 +25,9 @@ from telegraph import upload_file
 _T_LIMIT = 5242880
 
 @Client.on_message(filters.command('telegraph') & filters.chat(ALL_CHATS))
+@FayasNoushad.on_message(filters.private & filters.media)
 async def getmedia(bot, update):
-    medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/WeebZone/TelegraphBot"
-    
-        replied = message.reply_to_message
-    if not replied:
-        await message.reply("reply to media or text")
-        return
-    if not ((replied.photo and replied.photo.file_size <= _T_LIMIT)
-            or (replied.animation and replied.animation.file_size <= _T_LIMIT)
-            or (replied.video and replied.video.file_name.endswith('.mp4')
-                and replied.video.file_size <= _T_LIMIT)
-            or (replied.sticker and replied.sticker.file_name.endswith('.webp'))
-            or replied.text
-            or (replied.document
-                and replied.document.file_name.endswith(
-                    ('.jpg', '.jpeg', '.png', '.gif', '.mp4', '.html', '.txt', '.py'))
-                and replied.document.file_size <= _T_LIMIT)):
-        await message.reply("not supported!")
-        return
-    
+    medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/FayasNoushad/FnTelegraphBot"
     try:
         message = await update.reply_message(
             text="`Processing...`",
@@ -68,7 +51,7 @@ async def getmedia(bot, update):
             reply_markup=reply_markup
         )
         return
-    text=f"<b>Link:</b> `https://telegra.ph{response[0]}`\n\n<b>Join:</b> @WeebZoneIndia"
+    text=f"Link: https://telegra.ph{response[0]}"
     reply_markup=InlineKeyboardMarkup(
         [[
         InlineKeyboardButton(text="Open Link", url=f"https://telegra.ph{response[0]}"),
