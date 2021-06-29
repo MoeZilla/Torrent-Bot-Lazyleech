@@ -22,14 +22,19 @@ from .. import ADMIN_CHATS, ALL_CHATS
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from telegraph import upload_file
 
-_T_LIMIT = 5242880
-
 @Client.on_message(filters.command('telegraph') & filters.chat(ALL_CHATS))
 async def getmedia(bot, update):
+    reply = message.reply_to_message
+    document = message.document
+    photo = message.photo
+    thumbset = False
+    user_id = message.from_user.id
     medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/FayasNoushad/FnTelegraphBot"
+    
+    if document or photo:
     try:
-        message = await update.reply_message(
-            text="`Processing...`",
+        message = await message.reply_text(
+            text="Processing...",
             disable_web_page_preview=True
         )
         await bot.download_media(
@@ -44,7 +49,7 @@ async def getmedia(bot, update):
     except Exception as error:
         print(error)
         text=f"Error :- <code>{error}</code>"
-        await message.edit_text(
+        await message.reply_text(
             text=text,
             disable_web_page_preview=True,
             reply_markup=reply_markup
@@ -57,7 +62,7 @@ async def getmedia(bot, update):
         InlineKeyboardButton(text="Share Link", url=f"https://telegram.me/share/url?url=https://telegra.ph{response[0]}")
         ]]
     )
-    await message.edit_text(
+    await message.reply_text(
         text=text,
         disable_web_page_preview=True,
         reply_markup=reply_markup
