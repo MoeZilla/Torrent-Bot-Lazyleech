@@ -32,7 +32,6 @@ async def getmedia(bot, update):
     medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/FayasNoushad/FnTelegraphBot"
     
     if document or photo:
-    try:
         message = await message.reply_text(
             text="Processing...",
             disable_web_page_preview=True
