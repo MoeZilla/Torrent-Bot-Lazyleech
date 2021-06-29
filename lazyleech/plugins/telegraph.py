@@ -26,7 +26,7 @@ from telegraph import upload_file
 async def getmedia(bot, update):
     medianame = "./DOWNLOADS/" + str(update.from_user.id) + "/WeebZone/TelegraphBot"
     try:
-    if message.reply_to_message.media: 
+    if message.reply_to_message.document: 
         message = await update.reply_message(
             text="`Processing...`",
             disable_web_page_preview=True
