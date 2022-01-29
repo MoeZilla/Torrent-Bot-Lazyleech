@@ -111,7 +111,11 @@ async def aria2_add_magnet(session, user_id, link, timeout=0):
             try:
                 await aria2_remove(session, gid)
             except Aria2Error as ex:
-                if not (ex.error_code == 1 and ex.error_message == f'Active Download not found for GID#{gid}'):
+                if (
+                    ex.error_code != 1
+                    or ex.error_message
+                    != f'Active Download not found for GID#{gid}'
+                ):
                     raise
 
 async def aria2_add_directdl(session, user_id, link, filename=None, timeout=60):

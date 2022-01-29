@@ -77,21 +77,20 @@ async def split_files(filename, destination_dir, no_ffmpeg=False):
     stdout, _ = await proc.communicate()
     return shlex.split(' '.join([i[14:] for i in stdout.decode().strip().split('\n')]))
 
-video_duration_cache = dict()
+video_duration_cache = {}
 video_duration_lock = asyncio.Lock()
 async def get_video_info(filename):
     proc = await asyncio.create_subprocess_exec('ffprobe', '-print_format', 'json', '-show_format', '-show_streams', filename, stdout=asyncio.subprocess.PIPE)
     stdout, _ = await proc.communicate()
     js = json.loads(stdout)
-    if js.get('format'):
-        if 'duration' not in js['format']:
-            async with video_duration_lock:
-                if filename not in video_duration_cache:
-                    with tempfile.NamedTemporaryFile(suffix='.mkv') as tempf:
-                        proc = await asyncio.create_subprocess_exec('ffmpeg', '-y', '-i', filename, '-c', 'copy', tempf.name)
-                        await proc.communicate()
-                        video_duration_cache[filename] = (await get_video_info(tempf.name))['format']['duration']
-            js['format']['duration'] = video_duration_cache[filename]
+    if js.get('format') and 'duration' not in js['format']:
+        async with video_duration_lock:
+            if filename not in video_duration_cache:
+                with tempfile.NamedTemporaryFile(suffix='.mkv') as tempf:
+                    proc = await asyncio.create_subprocess_exec('ffmpeg', '-y', '-i', filename, '-c', 'copy', tempf.name)
+                    await proc.communicate()
+                    video_duration_cache[filename] = (await get_video_info(tempf.name))['format']['duration']
+        js['format']['duration'] = video_duration_cache[filename]
     return js
 
 async def generate_thumbnail(videopath, photopath):
@@ -108,10 +107,7 @@ async def convert_to_jpg(original, end):
 
 # https://stackoverflow.com/a/34325723
 def return_progress_string(current, total):
-    if total:
-        filled_length = int(10 * current // total)
-    else:
-        filled_length = 0
+    filled_length = int(10 * current // total) if total else 0
     return '[' + '█' * filled_length + ' ' * (10 - filled_length) + ']'
 
 # https://stackoverflow.com/a/852718

@@ -67,7 +67,7 @@ along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
 logging.basicConfig(level=logging.INFO)
 app = Client('lazyleech', API_ID, API_HASH, plugins={'root': os.path.join(__package__, 'plugins')}, bot_token=BOT_TOKEN, test_mode=TESTMODE, parse_mode='html', sleep_threshold=30)
 session = aiohttp.ClientSession()
-help_dict = dict()
+help_dict = {}
 preserved_logs = []
 
 class SendAsZipFlag:

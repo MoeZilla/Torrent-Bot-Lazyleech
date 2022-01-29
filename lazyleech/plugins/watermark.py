@@ -29,10 +29,44 @@ async def savewatermark(client, message):
     user_id = message.from_user.id
     watermark_path = os.path.join(str(user_id), 'watermark.jpg')
     os.makedirs(str(user_id), exist_ok=True)
-    if document or photo:
-        if photo or (document.file_size < 10485760 and os.path.splitext(document.file_name)[1] and (not document.mime_type or document.mime_type.startswith('image/'))):
+    if (document or photo) and (
+        photo
+        or (
+            document.file_size < 10485760
+            and os.path.splitext(document.file_name)[1]
+            and (
+                not document.mime_type
+                or document.mime_type.startswith('image/')
+            )
+        )
+    ):
+        with tempfile.NamedTemporaryFile(dir=str(user_id)) as tempthumb:
+            await message.download(tempthumb.name)
+            mimetype = await get_file_mimetype(tempthumb.name)
+            if mimetype.startswith('image/'):
+                thumbset = True
+                with open(watermark_path, 'wb') as watermark_file:
+                    while True:
+                        chunk = tempthumb.read(10)
+                        if not chunk:
+                            break
+                        watermark_file.write(chunk)
+    if not getattr(reply, 'empty', True) and not thumbset:
+        document = reply.document
+        photo = reply.photo
+        if (document or photo) and (
+            photo
+            or (
+                document.file_size < 10485760
+                and os.path.splitext(document.file_name)[1]
+                and (
+                    not document.mime_type
+                    or document.mime_type.startswith('image/')
+                )
+            )
+        ):
             with tempfile.NamedTemporaryFile(dir=str(user_id)) as tempthumb:
-                await message.download(tempthumb.name)
+                await reply.download(tempthumb.name)
                 mimetype = await get_file_mimetype(tempthumb.name)
                 if mimetype.startswith('image/'):
                     thumbset = True
@@ -42,22 +76,6 @@ async def savewatermark(client, message):
                             if not chunk:
                                 break
                             watermark_file.write(chunk)
-    if not getattr(reply, 'empty', True) and not thumbset:
-        document = reply.document
-        photo = reply.photo
-        if document or photo:
-            if photo or (document.file_size < 10485760 and os.path.splitext(document.file_name)[1] and (not document.mime_type or document.mime_type.startswith('image/'))):
-                with tempfile.NamedTemporaryFile(dir=str(user_id)) as tempthumb:
-                    await reply.download(tempthumb.name)
-                    mimetype = await get_file_mimetype(tempthumb.name)
-                    if mimetype.startswith('image/'):
-                        thumbset = True
-                        with open(watermark_path, 'wb') as watermark_file:
-                            while True:
-                                chunk = tempthumb.read(10)
-                                if not chunk:
-                                    break
-                                watermark_file.write(chunk)
     if thumbset:
         thumbnail = os.path.join(str(user_id), 'thumbnail.jpg')
         watermarked_thumbnail = os.path.join(str(user_id), 'watermarked_thumbnail.jpg')

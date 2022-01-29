@@ -20,10 +20,8 @@ from pykeyboard import InlineKeyboard
 @Client.on_message(filters.private & filters.command('start'))
 async def start_cmd(client, message):
 
-    msg = f"""
-<b>Hi, I am Torrent King.</b>
-Sorry But Due to some 18+ Leechers I am no longer working in Private, Please Join our Leech/Mirror Group Instead
-        """
+    msg = '\x1f<b>Hi, I am Torrent King.</b>\x1fSorry But Due to some 18+ Leechers I am no longer working in Private, Please Join our Leech/Mirror Group Instead\x1f        '
+
     buttons = InlineKeyboard(row_width=2)
     buttons.add(
         InlineKeyboardButton(
