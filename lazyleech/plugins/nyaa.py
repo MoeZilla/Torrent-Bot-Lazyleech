@@ -69,7 +69,7 @@ async def return_search(query, page=1, sukebei=False):
         except IndexError:
             return '', len(results), ttl
 
-message_info = dict()
+message_info = {}
 ignore = set()
 @Client.on_message(filters.command(['ts', 'nyaa', 'nyaasi']))
 async def nyaa_search(client, message):

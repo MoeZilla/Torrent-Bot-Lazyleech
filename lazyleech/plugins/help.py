@@ -54,7 +54,7 @@ async def help_cmd(client, message):
     callback_info[(reply.chat.id, reply.message_id)] = message.from_user.id, module
 
 callback_lock = asyncio.Lock()
-callback_info = dict()
+callback_info = {}
 @Client.on_callback_query(custom_filters.callback_data('help_back') & custom_filters.callback_chat(ALL_CHATS))
 async def help_back(client, callback_query):
     message = callback_query.message
